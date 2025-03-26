@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
+
+
+
+/* Global body blur class */
+.body-blur {
+    filter: blur(5px);
+    transition: filter 0.3s ease; /* Smooth transition */
+    pointer-events: none; /* Disable interactions with blurred elements */
+  }
+  
+  /* Ensure header and dropdown are above the blurred content */
+  body .no-blur {
+    z-index: 9999; /* Ensure they are above the blurred content */
+    position: relative;
+    pointer-events: auto; /* Ensure they remain clickable */
+  }
+/* Dropdown animation */
+@keyframes dropdownAnimation {
+    from {
+      opacity: 0;
+      transform: translateY(20px); /* Start slightly lower */
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0); /* Final position */
+    }
+  }
+  
+  .animate-dropdown {
+    animation: dropdownAnimation 0.4s ease-out;
+  }
+  
+  .border-top {
+    border-top: 3px solid #d1d5db; /* Tailwind's gray-300 color */
+  }
+    
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
