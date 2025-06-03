@@ -34,6 +34,8 @@ const User = require("../models/user");
           if (!user) {
             return res.status(403).json({ message: "Unauthorized, user not found" });
           }
+          user.lastActiveDate = Date.now();
+          await user.save();
           res.json({
             success:true,
             successMessage:"user data comes",

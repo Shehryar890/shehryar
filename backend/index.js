@@ -2,6 +2,7 @@ const dotenv =  require("dotenv").config({ path: "./.env" });
 
 const cors = require('cors');
 const express = require('express');
+
 const compression = require('compression');
 
 
@@ -25,10 +26,15 @@ const path = require('path');
 const authRoute = require('./routes/auth');
 const passport = require('passport');
 const googleRoute = require('./routes/outh');
+const csrfRoute = require("./routes/csrftoken")
 const contactRoute = require('./routes/contact');
-const allproductsRoute = require('./routes/allproducts');
+// const allproductsRoute = require('./routes/allproducts');
 const orderRoute = require('./routes/order');
-const reviewRoute = require('./routes/review');
+// const reviewRoute = require('./routes/review');
+const CouponRoute = require("./routes/coupon")
+const stripeRoutes = require("./routes/stripecheckout")
+
+const updateRoute = require('./routes/savingproduct')
 
 const logoutroute = require("./routes/logout")
 const items = require('./routes/salefeatures');
@@ -110,12 +116,16 @@ app.use('/token', tokenroute);
 
 app.use('/contact', contactRoute);
 app.use('/shop', shoprouter);
-app.use('/products', allproductsRoute);
+// app.use('/products', allproductsRoute);
 app.use('/cart', cartrouter);
 app.use('/logout', logoutroute)
 
+app.use("/update" , updateRoute)
+
 app.use('/salefeatures', items);
+app.use('/send' , csrfRoute)
 app.use('/orders', orderRoute);
+app.use('/coupon', CouponRoute)
  
 app.use("/create", (req, res, next) => {
   console.log("✅ Route /create is being accessed");
@@ -126,9 +136,9 @@ app.use("/create", (req, res, next) => {
 }, productSaveRoute);
 
 
- 
+ app.use("/stripe"  , stripeRoutes)
 
-app.use('/review', reviewRoute);
+// app.use('/review', reviewRoute);
 
 // Create HTTP server and initialize Socket.IO
 const server = http.createServer(app);

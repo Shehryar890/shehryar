@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Logo = ()=>{
     return (
-     <Link to='/home' >    <h1 className="  text-black style:none text-sm  xs:text-xl font-montserrat text-sm font-bold  md:text-4xl   "> C o s t i c a
+     <Link to='/' >    <h1 className="  text-black style:none text-sm   md:text-xl font-montserrat  font-bold    "> C o s t i c a
 </h1>   </Link>   
         
         

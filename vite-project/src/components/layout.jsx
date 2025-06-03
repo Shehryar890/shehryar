@@ -14,9 +14,11 @@ import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { messageActions } from "../../store/succesfulmessage";
 import { blurredActions } from "../../store/dropdown";
+import BottomNav from "./bottomdiv/bottomdiv";
 
 import { gsap } from "gsap";
 import { fetchUserAction } from "../../store/user";
+
 
 
 const Layout =()=>{
@@ -130,6 +132,7 @@ const Layout =()=>{
    <main className="">
     <Outlet className="h-full w-full"></Outlet>
    </main>
+   <BottomNav/>
    <Footer></Footer>
    </div>
     </>

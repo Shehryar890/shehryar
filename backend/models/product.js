@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-       
+       const Review = require("../models/review")
 
 // const productSchema = new mongoose.Schema({
 //   name: { type: String, required: true },
@@ -36,25 +36,59 @@ const mongoose = require("mongoose");
                const productSchema  = new mongoose.Schema({
 
 
-                name: { type: String, required: true },
-                description: { type: String, required: true },
-                price: { type: Number, required: true },
-                category: { type: String, required: true },
-                brand: { type: String, required: true },
+                name: { type: String,  },
+                description: { type: String,  },
+                price: { type: Number,  },
+                category: [{ type: String,  }],
+                brand: { type: String,  },
                 images: [{ type: String }],
-                stock: { type: Number, required: true, default: 0 },
+                stock: { type: Number, default: 0 },
                 sold: { type: Number, default: 0 },
-                rating: { type: Number, default: 0 },
-                reviews: [
-                  {
-                    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-                    rating: { type: Number, required: true },
-                    comment: { type: String },
-                  },
-                ],
+                discountoffer:{
+                  type:String,
+
+                },
+
+               
+                averageRating: { type: Number, default: 0 },
+totalReviws  :{
+  type:Number,
+  default:0
+},
+
+
+             
                 ingredients: [{ type: String }],
                 skinType: { type: String },
                 discount: { type: Number, default: 0 },
+
+
+
+
+
+
+                //
+                views:{
+                  type:Number,
+                  default:0
+                },
+                purchase:{
+                  type:Number,
+                  default:0
+                },
+                addtoCartCount:{
+                  type:Number,
+                  default:0
+                },
+
+
+
+                embeddedvalue:{
+
+  type:[Number] ,
+  default:[]
+
+}
               }, { timestamps: true });
 
               

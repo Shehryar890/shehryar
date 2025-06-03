@@ -1,14 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const { getcartItems, addPost, deleteCart } = require('../controller/cartlogic');
+const express= require("express")
 
-// Route to get all cart items for a specific user
-router.get('/:userId', getcartItems);
+const router = express.Router(); 
 
-// Route to add an item to the cart (or update quantity)
-router.post('/post', addPost);
 
-// Route to delete an item from the cart
-router.delete('/:userId/:productId', deleteCart);
+           
+const {addtoCart} = require("../controller/cartlogic");
 
-module.exports = router;
+ router.post("/create" , addtoCart)
+
+module.exports  = router

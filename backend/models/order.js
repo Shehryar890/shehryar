@@ -1,78 +1,78 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
+ const  { CartItem }  =  require("./cartSchema")
+ const  User  =  require("./user")
 
-const orderSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  userEmail: {
+ const shippingSchema = new mongoose.Schema({
+  fullName: {
     type: String,
-    required: true, // Email address of the user placing the order
+    required: true, // You can make required based on your use-case
+    trim: true
   },
-  products: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        default: 1,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-    },
-  ],
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  status: {
-    type: String,
-    default: 'pending',
-    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-  },
-  deliveryAddress: {
+  phoneNo: {
     type: String,
     required: true,
+    trim: true
   },
-  liveLocation: {
+  email: {
     type: String,
-    required: false, // Optional for real-time tracking
+    required: true,
+    lowercase: true,
+    trim: true
   },
-  riderImage: {
+  address: {
     type: String,
-    required: false, // Path to the uploaded rider image
+    required: true,
+    trim: true
   },
-  riderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming riders are part of the User model
-    required: false,
-  },
-  reviewLinkSent: {
-    type: Boolean,
-    default: false, // Tracks whether the review email has been sent
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  instructions: {
+    type: String,
+    default: ''
+  }
 });
+       const OrderScehma = new mongoose.Schema({
+                            
+                          userId:{
+                            type: mongoose.Types.ObjectId,
 
-// Middleware to automatically update timestamps
-orderSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
+                            ref:"User",
+unique:true,
+                          },
 
-const Order = mongoose.model('Order', orderSchema);
-module.exports = Order;
+                          cartItems :[CartItem.schema],
+                          totalPrice:{
+                            type:Number,
+                            default:0
+                          },
+                          shippingAdress:shippingSchema,
+                          isPaid:{
+                            type:Boolean,
+                            default:false
+                          },
+                        paymentMethod:{
+                          type:String,
+                          enum:["Cod","Online"],
+                          default:"Cod"
+                        },
+                        status:{
+                          type:String,
+                          enum:["notPlaced" , "placed" , "processing" , "shipped","cancelled", "delivered"],
+                          default:"notPlaced",
+                        },
+                        paymentStatus:{
+                          type:String,
+                          enum:["notpaid", "Paid" ,"refunded"],
+                          default:"pending"
+                        }
+
+                          
+
+                          
+
+       }, {timestamps:true})
+
+
+      const Order = mongoose.model("Order" , OrderScehma)
+
+
+      module.exports = Order
+        

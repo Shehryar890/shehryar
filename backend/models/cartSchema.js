@@ -2,43 +2,81 @@ const mongoose = require('mongoose');
 
 
 
-const cartSchema  = new  mongoose.Schema({
-    productId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product'
+ const cartItemSchema = new mongoose.Schema({
 
-    },
-    name:{
-        type: String,
-        required: true
-    },
-    image:{
-        type: String,
-        required: true
-    },
-    price:{
-        type: Number,
-        required: true
-    },
-    details:{
-        type: String,
-        required: true
-    },
+
+
+productId :{
+    type: mongoose.Schema.Types.ObjectId,
+    ref :'Product',
+    required:true,
+},
+quantity:{
+    type:Number,
+    
+    min:1
+},
+price:{
+    type:Number,
+    default:0
+}
+
+ })
+
+ const cartScehma  = new mongoose.Schema({
+
     userId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+        required:true,
+        unique:true,
     },
-    quantity:{
-        type: Number,
-        required: true,
-        default: 1
-    }
+
+    items:
+        [
+            cartItemSchema
+        ],
+
+        totalPrice:{
+            type:Number,
+            default:0,
+
+        },
+
+        status:{
+            type:String ,
+             enum:[
+                "not placed"  , "Placed" , "pending"
+             ],
 
 
-})
+             default:"not placed"
 
-const Cart = mongoose.model('Cart', cartSchema);
+             
+        },
+
+   
+
+        
+
+    
+
+
+    
+
+ },{timestamps:true})
+
+ const CartItem = mongoose.model("cartItem" , cartItemSchema)
+
+
+const Cart =  mongoose.model("Cart" , cartScehma) 
 
 
 
-module.exports = Cart;
+
+
+         module.exports=    {Cart
+            ,
+          CartItem
+         }        
+       

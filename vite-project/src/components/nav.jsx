@@ -27,7 +27,7 @@ const NavIcons = () => {
     
     
     
-    className="hidden sm:flex sm:items-center sm:no-blur   text-black   sm:justify-center sm:gap-6 ">
+    className="hidden sm:flex sm:items-center sm:no-blur   text-black  xs:hidden sm:visible  sm:justify-center sm:gap-5 ">
       <div className="cursor-pointer
       hover:text-orange-600 
       

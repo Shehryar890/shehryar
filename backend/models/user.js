@@ -43,8 +43,18 @@ const bcrypt = require('bcrypt');
 
             image:{
               type: String,
-              default: "/userphoto.jpg"
+              default: null,
             },
+
+            hasLoggedIn:{
+              type:Boolean,
+              default:false,
+            }
+          ,
+          lastActiveDate:{
+            type: Date,
+            default:Date.now
+          }
 
             
      
@@ -54,7 +64,7 @@ const bcrypt = require('bcrypt');
 
             
             
-        })
+        },{timestamps:true})
                
       userSchema.pre("save", async function ( next){
 

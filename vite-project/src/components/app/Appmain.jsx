@@ -9,6 +9,7 @@ import Slider
          
          
              <Slider className = "flex-row"    />
+             
    
      )
  }

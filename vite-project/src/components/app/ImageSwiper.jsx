@@ -37,7 +37,7 @@ const Slider = () => {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+    <div className="w-full xs:h-72  ms:h-96 mss:h-96 sm:h-[46rem] md:h-screen flex items-center justify-center bg-gray-100">
       <Swiper
         modules={[Navigation, Pagination, Keyboard]}
         slidesPerView={1} // Show only 1 slide at a time
