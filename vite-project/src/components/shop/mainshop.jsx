@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../loadingspinner";
+import { Link } from "react-router-dom";
+import AddcartButton from "../cart/addtocartbutton";
 
-import {Link} from "react-router-dom"
 const Shop = () => {
   const [pageNumber, setpageNumber] = useState(1);
   const [brand, setbrand] = useState(null);
@@ -11,20 +12,19 @@ const Shop = () => {
   const [results, setresults] = useState([]);
   const [totalpages, settotalpages] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setloading] = useState(false);
 
-
-  const [loading, setloading] = useState(false)
   const handlecategory = (item) => {
     setcategory((prev) => (prev === item ? null : item));
-    setpageNumber(1)
+    setpageNumber(1);
   };
   const handlebrand = (item) => {
     setbrand((prev) => (prev === item ? null : item));
-    setpageNumber(1)
+    setpageNumber(1);
   };
   const handlepriceRange = (item) => {
     setpriceRange((prev) => (prev === item ? null : item));
-    setpageNumber(1)
+    setpageNumber(1);
   };
 
   useEffect(() => {
@@ -33,23 +33,20 @@ const Shop = () => {
       if (brand) params.brand = brand;
       if (category) params.category = category;
       if (priceRange && priceRange !== null) params.priceRange = priceRange;
-   setloading(true)
+      setloading(true);
 
       try {
         const response = await axios.get("http://localhost:8345/get/products", {
           params,
         });
 
-     
-console.log(response.data)
-
+        console.log(response.data);
         setresults(response.data.data.productoncurrentPage);
         settotalpages(response.data.data.totalPages);
       } catch (error) {
         console.log(error.message);
-      }
-      finally{
-        setloading(false)
+      } finally {
+        setloading(false);
       }
     };
 
@@ -89,7 +86,7 @@ console.log(response.data)
     setbrand(null);
     setcategory(null);
     setpriceRange(null);
-    setpageNumber(1)
+    setpageNumber(1);
   };
 
   let totalpagesarray = [];
@@ -99,10 +96,7 @@ console.log(response.data)
 
   return (
     <>
-      {/* Main container */}
       <div className="min-h-screen bg-gray-50">
-
-        {/* Header with hamburger on small screens */}
         <header className="md:hidden flex items-center justify-between p-4 bg-white shadow">
           <h2 className="text-xl font-semibold">Filters</h2>
           <button
@@ -110,7 +104,6 @@ console.log(response.data)
             className="focus:outline-none"
             aria-label="Toggle sidebar"
           >
-            {/* Hamburger icon */}
             <svg
               className="w-8 h-8 text-gray-700"
               fill="none"
@@ -129,8 +122,6 @@ console.log(response.data)
         </header>
 
         <div className="flex">
-
-          {/* Sidebar for md and up */}
           <aside
             className={`
             fixed inset-y-18  left-0 bg-white shadow-md p-4 w-64 overflow-auto
@@ -161,17 +152,10 @@ console.log(response.data)
                 {brandarray.map((item, index) => (
                   <button
                     key={index}
-                    onClick={() => 
-                      
-                      {handlebrand(item);
-                       setSidebarOpen(false)
-                      }
-                      }
-
-
-                      
-                    
-                    
+                    onClick={() => {
+                      handlebrand(item);
+                      setSidebarOpen(false);
+                    }}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition
                       ${
                         brand === item
@@ -191,11 +175,10 @@ console.log(response.data)
                 {categoryarray.map((item, index) => (
                   <button
                     key={index}
-                    onClick={() => {handlecategory(item)
-
-                       setSidebarOpen(false)
-                    }
-                    }
+                    onClick={() => {
+                      handlecategory(item);
+                      setSidebarOpen(false);
+                    }}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition
                       ${
                         category === item
@@ -217,14 +200,10 @@ console.log(response.data)
                 {priceRangesarray.map((item, index) => (
                   <button
                     key={index}
-                    onClick={() => 
-                      
-                      {
-                      handlepriceRange(item)
-                       setSidebarOpen(false)
-                      }
-                      
-                    }
+                    onClick={() => {
+                      handlepriceRange(item);
+                      setSidebarOpen(false);
+                    }}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition
                       ${
                         priceRange === item
@@ -246,7 +225,6 @@ console.log(response.data)
             </button>
           </aside>
 
-          {/* Overlay behind sidebar when open on small screens */}
           {sidebarOpen && (
             <div
               onClick={() => setSidebarOpen(false)}
@@ -254,95 +232,90 @@ console.log(response.data)
             ></div>
           )}
 
-          {/* Main content */}
           <main className="flex-1 min-h-screen pt-4 pb-20 px-4 md:pl-72 md:pr-8 bg-gray-50">
             <div className="max-w-7xl mx-auto">
+              {loading ? (
+                <Loader />
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {results.length === 0 ? (
+                    <p className="text-center col-span-full text-gray-500 text-lg mt-20">
+                      No products found
+                    </p>
+                  ) : (
+                    results.map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#F5F5F5] rounded-lg shadow-lg hover:shadow-3xl transition-shadow duration-300 flex flex-col"
+                      >
+                        <Link
+                          to={`/productdetail/${item._id}`}
+                          className="flex-1"
+                        >
+                          {item.images && item.images[0] ? (
+                            <img
+                              src={item.images[0]}
+                              alt={item.name}
+                              className="object-contain h-80 w-full rounded-t-lg bg-[#dcdcdc]"
+                            />
+                          ) : (
+                            <div className="h-48 w-full bg-gray-200 rounded-t-lg flex items-center justify-center text-gray-400 text-xl">
+                              No Image
+                            </div>
+                          )}
 
-              {/* Products grid */}
-          {/* Products grid */}
+                          <div className="p-4 flex flex-col flex-grow">
+                            <h2 className="text-xl font-semibold mb-2 text-gray-900 truncate">
+                              {item.name}
+                            </h2>
 
-          {loading ? (<Loader></Loader>):
+                            <p className="text-sm text-gray-600 mb-1 line-clamp-3">
+                              Ingredients: {item.ingredients || "N/A"}
+                            </p>
 
+                            <div className="mt-auto space-y-1">
+                              <p className="text-sm text-gray-700">
+                                <strong>Category:</strong> {item.category}
+                              </p>
+                              <p className="text-sm text-gray-700">
+                                <strong>Brand:</strong> {item.brand}
+                              </p>
+                              <p className="text-lg font-bold text-red">
+                                <del className="text-red-600 text-sm">
+                                  ${item.price.toFixed(2)}
+                                </del>{" "}
+                                &nbsp;
+                                <span className="text-black text-lg">
+                                  ${item.discount}
+                                </span>
+                              </p>
+                              <p
+                                className={`text-sm ${
+                                  item.stock > 0
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {item.stock > 0
+                                  ? `In stock: ${item.stock}`
+                                  : "Out of stock"}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
 
-(<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-  {results.length === 0 ? (
-    <p className="text-center col-span-full text-gray-500 text-lg mt-20">
-      No products found
-    </p>
-  ) : (
-    results.map((item, index) => (
-      <Link 
-        key={index}
-        className="bg-[#F5F5F5] rounded-lg shadow-lg hover:shadow-3xl transition-shadow duration-300 flex flex-col"
+                        <div className="p-4 pt-0">
+                          <AddcartButton
+                            productId={[item._id]}
+                            disabled={item.stock === 0}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
 
-      to={`/productdetail/${item._id}`}  
-      >
-       
-        {/* Image */}
-        {item.images && item.images[0] ? (
-          <img
-            src={item.images[0]}
-            alt={item.name}
-            className="object-contain h-80 w-full rounded-t-lg bg-[#dcdcdc]"
-          />
-        ) : (
-          <div className="h-48 w-full bg-gray-200 rounded-t-lg flex items-center justify-center text-gray-400 text-xl">
-            No Image
-          </div>
-        )}
-      
-
-        {/* Content */}
-        <div className="p-4 flex flex-col flex-grow">
-          <h2 className="text-xl font-semibold mb-2 text-gray-900 truncate">
-            {item.name}
-          </h2>
-
-          <p className="text-sm text-gray-600 mb-1 line-clamp-3">
-            Ingredients: {item.ingredients || "N/A"}
-          </p>
-
-          <div className="mt-auto space-y-1">
-            <p className="text-sm text-gray-700">
-              <strong>Category:</strong> {item.category}
-            </p>
-            <p className="text-sm text-gray-700">
-              <strong>Brand:</strong> {item.brand}
-            </p>
-            <p className="text-lg font-bold text-red">
-              <del className="text-red-600 text-sm">${item.price.toFixed(2)}</del> &nbsp; <span className="text-black text-lg">{`$${item.discount}`}</span>
-            </p>
-            <p className={`text-sm ${item.stock > 0 ? "text-green-600" : "text-red-600"}`}>
-              {item.stock > 0 ? `In stock: ${item.stock}` : "Out of stock"}
-            </p>
-          </div>
-
-          {/* Add to Cart button */}
-          <button
-            disabled={item.stock === 0}
-            className={`mt-4 w-full py-2 rounded-md font-semibold text-white transition
-              ${
-                item.stock === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#d65a31] hover:bg-black "
-              }`}
-            onClick={() => alert(`Add to cart: ${item.name}`)}
-          >
-            Add to Cart
-          </button>
-
-          </div>
-        </Link>
-    
-    ))
-  )}
-
-          
-  </div>
-
-
-)}
-              {/* Pagination */}
               <nav
                 aria-label="Pagination"
                 className="mt-8 flex justify-center flex-wrap gap-2"

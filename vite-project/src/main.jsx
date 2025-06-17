@@ -12,7 +12,6 @@ import Signup from './components/login/signup'
 import "swiper/css";
 import "swiper/css/navigation";  // for navigation arrows
 import "swiper/css/pagination";  // for pagination dots
-
  
 import LoginPage from './components/login/loginpage'
 import App from './components/app/Appmain'

@@ -5,6 +5,7 @@ import { hamburgerReducer } from './hamburger.js';
 import { messageReducer } from './succesfulmessage.js';
 import { usernameReducer } from './username.js';
 import { userReducer} from './user.js';
+import { cartslicereducer } from './cart.js';
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     blur: blurredReducer,
     successfulmsg: messageReducer,
     username: usernameReducer,
+    cart:cartslicereducer,
     user:userReducer,
     // Add the other reducer(s) here
 

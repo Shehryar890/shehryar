@@ -110,7 +110,7 @@ let totalDiscount= 0;
                        }
                           
           const addtoCart = async (req,res)=>{
-const session = await mongoose.startSession()
+
 
 
                        const {userID , productID} = req.body;
@@ -121,16 +121,16 @@ let totalPrice = 0;
 
                        try{
 
-                        session.startTransaction()
+                   
                       
 
 
-                        const user = await  Cart.findOne({userId:userID}).populate("items.productId").session(session);
+                        const user = await  Cart.findOne({userId:userID}).populate("items.productId");
 
                             if(user){ 
                               
                                const existingItem = await user.items.find(item=>
-                            item.productId.equals(productID)
+                            item.productId.equals(productexists._id)
                                )
 
                                      if(existingItem){
@@ -142,7 +142,7 @@ let totalPrice = 0;
                                           totalPrice = 0; // Fallback if totalPrice is NaN
                                       }
                        
-await user.save({session});
+await user.save();
 
 
                                      }
@@ -161,7 +161,7 @@ else{
                        }
 
                       
-                       await user.save({session});
+                       await user.save();
                       
                       
 }
@@ -170,7 +170,7 @@ else{
 
 
 user.totalPrice = totalPrice;
-await user.save({session});
+await user.save();
 
     
   
@@ -189,14 +189,14 @@ await user.save({session});
                         ]
                             
                           })
-                          await cart.save({session});
+                          await cart.save();
                           await cart.populate("items.productId");
                           cart.totalPrice = calculatePrice(cart.items);
                           if (isNaN(cart.totalPrice)) {
                             totalPrice = 0; // Fallback if totalPrice is NaN
                           }
 
-                          await cart.save({session});
+                          await cart.save();
                           
 
 
@@ -205,22 +205,24 @@ await user.save({session});
 
 
                            
-                            const userincart = await Cart.findOne({userId:userID}).session(session);
+                            const userincart = await Cart.findOne({userId:userID});
                             if(userincart){
                                                  const finalpriceafter = userincart.totalPrice
                                                  const userid = userincart.userId    
                                userincart.totalPrice = await  checkandapplycoupon(finalpriceafter,userid)
-                               await userincart.save({session})
+                               await userincart.save()
 
                                
 
                             }
-                            await session.commitTransaction();
-                            session.endSession();
+                          
 
                             return res.json({
                               success:true,
-                              message:"successfully done"
+                              message:"successfully done",
+                              
+
+                              
                             })
 
                                       
@@ -228,8 +230,7 @@ await user.save({session});
                         
                         
                       } catch (error) {
-                        session.abortTransaction()
-                        session.endSession()
+                      
                           console.log(error.message);
                           return res.status(500).json({ success: false, message: "Internal Server Error" });
                       }
@@ -299,7 +300,7 @@ aftercodecoupon +=discount
                       }
 
           const getCart = async (req,res)=>{
-            const {userid}=req.body;
+            const {userid}=req.params;
 
                const usercart = await Cart.findOne({userId:userid}).populate("items.productId")
 
@@ -333,93 +334,107 @@ aftercodecoupon +=discount
           }
                       
 
-                   const deleteProduct = async (req,res)=>{
+                 const deleteProduct = async (req, res) => {
+  const { userid, productID } = req.body;
+  const session = await mongoose.startSession();
 
-                                          
-                             const {userid , productID} = req.body;
-                             const session= await mongoose.startSession()
-try{
-  session.startTransaction()
-let totalprice = 0;
-const productexists = await  Product.findById(productID).session(session)
-                       const discountedPrice =productexists.discount || productexists.price
-                             const user = await Cart.findOne({
-                              userId:userid
-                             })
-if(!user){
-  session.abortTransaction()
-return res.json({
-  success:false,
-  message:"user not found"
+  try {
+    session.startTransaction();
+    let totalprice = 0;
 
-})
-}
-else{
+    const productexists = await Product.findById(productID).session(session);
+    const discountedPrice = productexists.discount || productexists.price;
 
+    const user = await Cart.findOne({ userId: userid }).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      return res.status(404).json({
+        success: false,
+        message: "User cart not found",
+      });
+    }
 
-const exisitingitem  = await user.items.find(item=>item.productId.equals(productID))
+    const existingItem = user.items.find(item =>
+      item.productId.equals(productID)
+    );
 
-if(exisitingitem.quantity<=1){
-                
-                         
- const cartitmes = user.items.filter(item=>item.productId != productID)
+    if (!existingItem) {
+      await session.abortTransaction();
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in cart",
+      });
+    }
 
-             user.items = cartitmes
-            totalprice = calculatePrice(user.items)
+    if (existingItem.quantity <= 1) {
+      // Remove item from cart
+      user.items = user.items.filter(item => !item.productId.equals(productID));
+    } else {
+      // Decrease quantity
+      existingItem.quantity -= 1;
+      existingItem.price = discountedPrice * existingItem.quantity;
+    }
 
-          
+    // Recalculate total price
+    totalprice = calculatePrice(user.items);
+    user.totalPrice = isNaN(totalprice) ? 0 : totalprice;
 
+    // Apply coupon logic
+    user.totalPrice = await checkandapplycoupon(user.totalPrice, userid);
 
-            user.totalPrice = totalprice;
+    await user.save({ session });
+    await session.commitTransaction();
 
-            await user.save({session})
-          }
-          else{
+    return res.status(200).json({
+      success: true,
+      message: "Product removed successfully",
+    });
 
-            exisitingitem.quantity -=1;
-            exisitingitem.price = discountedPrice*exisitingitem.quantity;
-
-            totalprice = calculatePrice(user.items)
-            user.totalPrice = totalprice
-
-            await user.save({session})
-            
-          }
-          const userincart = await Cart.findOne({userId:userid})
-          if(userincart){
-                               const finalpriceafter = userincart.totalPrice
-                               const userid = userincart.userId    
-             userincart.totalPrice = await  checkandapplycoupon(finalpriceafter,userid)
-             await userincart.save({session})
-}
-session.commitTransaction()
-           return res.json({
-            success:true,
-            message:"product removed successfully"
-           })
-          
-    
-                         
-}
-
-
-                          
+  } catch (error) {
+    await session.abortTransaction();
+    console.log("Remove cart error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  } finally {
+    session.endSession();
+  }
+};
 
 
+                 const clearCart = async (req, res) => {
+  const { userId } = req.body;
 
+  try {
+    const cart = await Cart.findOne({ userId: userId });
 
+    if (!cart) {
+      return res.status(400).json({
+        success: false,
+        message: "Cart with this userId doesn't exist",
+      });
+    }
 
+  
+    cart.items = [];
+    cart.totalPrice = 0;
 
+    await cart.save(); 
 
-}catch(error){
-  session.abortTransaction()
-  console.log(error.message)
-}finally{
-  session.endSession()
-}
-
-
-                   }
+    return res.status(200).json({
+      success: true,
+      message: "Cart cleared successfully",
+    });
+  } catch (error) {
+    console.error("Clear cart error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  
+};
+                 }
 
  
   module.exports= {
@@ -427,5 +442,5 @@ session.commitTransaction()
     deleteProduct,
     getCart,
 validateandapplyCoupon,
-
+clearCart
   }

@@ -1,10 +1,11 @@
 import Header from "./header"
 
-
+import { useToastCleanup } from "../lib/toasters";
 import { BsEmojiSmileUpsideDown } from "react-icons/bs";
 import Pagesdropdown  from "./allproducts"
 import CartPreview from "./cartPreview";
 import LoginPreview from "./loginpreiveiw";
+import { Topscroll } from "../lib/toasters";
 import HamburgerPreview from "./hamburger";
 import Shopdropdown from "./shopdropdown";
 import Footer from "./footer";
@@ -15,6 +16,9 @@ import { useDispatch } from "react-redux";
 import { messageActions } from "../../store/succesfulmessage";
 import { blurredActions } from "../../store/dropdown";
 import BottomNav from "./bottomdiv/bottomdiv";
+import { Toaster } from "sonner";
+
+
 
 import { gsap } from "gsap";
 import { fetchUserAction } from "../../store/user";
@@ -97,7 +101,8 @@ const Layout =()=>{
 
     return(
         <>
-                            
+        {Topscroll()}
+                          {  useToastCleanup()}
                             {success && (
  <div
  ref={successRef}
@@ -135,6 +140,9 @@ const Layout =()=>{
    <BottomNav/>
    <Footer></Footer>
    </div>
+
+  <Toaster position="top-center" richColors closeButton  />
+
     </>
     )
 }

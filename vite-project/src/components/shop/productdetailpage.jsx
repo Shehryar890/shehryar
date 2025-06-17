@@ -385,7 +385,7 @@ const suggestion = async()=>{
 
    {/* Swiper for similar products */}
     {suggestions?.products && suggestions.products.length > 0 && (
-  <div className="max-w-full mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+  <div className="max-w-full mx-auto mt-10 p-4 bg-[#F5F5F5] shadow-lg rounded-lg">
     <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Products Related</h2>
 
     <Swiper
@@ -401,7 +401,7 @@ const suggestion = async()=>{
   
   grabCursor={true}
   freeMode={true} // 👈 enables free dragging
-  className="pb-14"
+  className="pb-10"
   breakpoints={{
     640: { slidesPerView: 1 },
     768: { slidesPerView: 2 },

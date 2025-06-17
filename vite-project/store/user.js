@@ -49,19 +49,20 @@ console.log(document.cookie);
         users:null,
         error:null,
         loading:false,
-
+  
         islogout:false,
-        
+      
 
     },
     reducers:{
-        logout:(state , action)=>{
+        logout:(state )=>{
 
             state.islogout= true
 
         }
 
     },
+   
 
     extraReducers:  (builders)=>{
 
