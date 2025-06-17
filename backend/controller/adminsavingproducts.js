@@ -4,6 +4,8 @@ const { CohereClientV2 } = require('cohere-ai');
 
 const cloudinary = require("../config/cloudinaryconfig");
 
+const fs = require("fs");
+
 
 const axios = require("axios")
 const Product  = require("../models/product");
@@ -45,15 +47,15 @@ const doEmbedding = async (productDetailsText) => {
     }
   } catch (error) {
     console.error("Error fetching Google embeddings:", error.response?.data || error.message);
-    return []; // Return an empty array on failure
+    return []; 
   }
 };
 
 const createProduct = async (req, res) => {
+  console.log(JSON.stringify(req.files, null, 2));
+  console.log(JSON.stringify(req.body, null, 2));
+
   try {
-  
-
-
     if (!req.body || Object.keys(req.body).length === 0) {
       console.log(" `req.body` is EMPTY!");
       return res.status(400).json({
@@ -62,100 +64,82 @@ const createProduct = async (req, res) => {
       });
     }
 
-  
     const { name, description, price, category, brand, stock, discountoffer, skinType, ingredients } = req.body;
 
-   
-
-    
     if (!name || !description || !price || !category || !brand || !stock) {
       console.log(" Missing required fields!");
       return res.status(400).json({
         status: "error",
         message: "All fields are required",
-        receivedData: req.body, // Debugging
+        receivedData: req.body, 
       });
     }
 
-       const numprice =  parseFloat(price)
-       if(isNaN(numprice)){
-        throw new Error("invalid number")
-       };
-      const numstock=  parseFloat(stock)
-      if(isNaN(numstock)){
-        throw new Error("invalide number")
-       };
+    const numprice = parseFloat(price);
+    if (isNaN(numprice)) {
+      throw new Error("invalid number");
+    }
+    const numstock = parseFloat(stock);
+    if (isNaN(numstock)) {
+      throw new Error("invalid number");
+    }
 
-    let imageUrls = [];
+   
+let imageUrls
     if (req.files && req.files.length > 0) {
-      imageUrls = req.files.map((file) => file.path); 
+     const uploadPromises = req.files.map((file) =>
+      cloudinary.uploader.upload(file.path, {
+        folder: "product_images",
+        transformation: [{ width: 500, height: 500, crop: "limit" }],
+      })
+    );
+
+
+    const uploadResults = await Promise.all(uploadPromises);
+
+
+    imageUrls  = uploadResults.map((result) => result.secure_url);
       console.log("Cloudinary Image URLs:", imageUrls);
     } else {
-      console.log(" No files received");
+      return res.status(400).json({
+        message: "Files are missing",
+      });
     }
-    // const checkcategory =      Array.isArray(category)?category:[category];
-    // const checkingredients = Array.isArray(ingredients)?ingredients:[ingredients];
-let numdiscount;
-let discountedprice = null;
+   
+    let numdiscount;
+    let discountedprice = null;
 
-    if(discountoffer )
+    if (discountoffer) {
+      numdiscount = parseFloat(discountoffer);
 
-
-
-    {
-
-      numdiscount = parseFloat(discountoffer)
-
-      if( isNaN(numdiscount) || numdiscount < 0 || numdiscount >100)
-      {
-        
-          return res.json({
-            message:"please enter a disocunt within range"
-          });
-        }
-      
-      
-                          
-      
-                              const disc  = parseFloat(numprice) * (numdiscount/100);
-      
-                               discountedprice = parseFloat(Math.round(numprice-disc).toFixed(2));
-                              
+      if (isNaN(numdiscount) || numdiscount < 0 || numdiscount > 100) {
+        return res.json({
+          message: "please enter a discount within range",
+        });
       }
-      else{
-        discountedprice = numprice;
-      }
-       
 
-     
+      const disc = parseFloat(numprice) * (numdiscount / 100);
+      discountedprice = parseFloat(Math.round(numprice - disc).toFixed(2));
+    } else {
+      discountedprice = numprice;
+    }
 
-
-  
-  const productDetailsArray = [name, description, price, category, brand, skinType, ingredients];
+    const productDetailsArray = [name, description, price, category, brand, skinType, ingredients];
     const embeddingString = productDetailsArray.flat().filter(Boolean).join(" ");
-  const productembedding =  await  doEmbedding(embeddingString)
-
-
-    
-
-
-
-    
+    const productembedding = await doEmbedding(embeddingString);
 
     const newProduct = await Product.create({
       name,
       description,
-      price:numprice,
+      price: numprice,
       category,
       brand,
-      stock:numstock,
-      discount :discountedprice ,
+      stock: numstock,
+      discount: discountedprice,
       skinType,
-      discountoffer :numdiscount,
-    ingredients,
-    embeddedvalue:productembedding,
- 
- 
+      discountoffer: numdiscount,
+      ingredients,
+      embeddedvalue: productembedding,
       images: imageUrls,
     });
 
@@ -163,17 +147,14 @@ let discountedprice = null;
       message: "Product successfully stored",
       product: newProduct,
     });
-  }
-
-
-   catch (err) {
-    console.error("Error:", err);
+  } catch (error) {
+    console.log("Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
-      error: err.message,
     });
   }
 };
+
 
 
 

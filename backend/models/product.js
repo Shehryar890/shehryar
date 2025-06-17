@@ -41,7 +41,7 @@ const mongoose = require("mongoose");
                 price: { type: Number,  },
                 category: [{ type: String,  }],
                 brand: { type: String,  },
-                images: [{ type: String }],
+                images: [  String ],
                 stock: { type: Number, default: 0 },
                 sold: { type: Number, default: 0 },
                 discountoffer:{

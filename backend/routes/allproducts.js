@@ -1,10 +1,24 @@
-// const expresss  = require('express');
+const express = require('express');
+const router = express.Router();
 
-// const {allProducts} = require('../controller/allproducts');
 
-// const router = expresss.Router();
 
-// router.get('/' , allProducts);
 
-// module.exports = router;
 
+
+const  {fetchAllProducts , 
+
+    
+    productDetailPage,
+    categorysuggestion
+   
+ }   = require('../controller/allproducts');
+
+
+
+
+router.get("/products" , fetchAllProducts );
+
+router.get('/productdetails/:productId' , productDetailPage)
+router.get('/similar/:productId' , categorysuggestion)
+module.exports = router;

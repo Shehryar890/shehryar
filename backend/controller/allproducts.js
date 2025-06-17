@@ -5,7 +5,8 @@ const Product  =  require("../models/product")
 const mongoose = require("mongoose");
 const { deleteProduct } = require("./adminproduct");
   const fetchAllProducts =async (req, res)=>{
-                                         
+                                         console.log("Incoming query params:", req.query);
+
                          
 try{
        const limit = 10;
@@ -29,31 +30,56 @@ const skip = (page-1)*limit;
                                     if(brand){
                                         filterQuery.brand = brand
                                     }
-if(priceRange){
-                        
-                      const range =   priceRange.split("-");
+if (
+  priceRange &&
+  priceRange !== "null" &&
+  typeof priceRange === "string" &&
+  priceRange.includes("-")
+) {
+  const range = priceRange.split("-");
+  const min = Number(range[0]);
+  const max = Number(range[1]);
 
-                        const min = Number(range[0]);
-                        const max = Number(range[1]);
-
-                    
-                        
-
-                        filterQuery.price = {
-                            $gte:min , $lte:max
-                        }
-
-
-
-
-
+  if (!isNaN(min) && !isNaN(max)) {
+    filterQuery.price = {
+      $gte: min,
+      $lte: max
+    };
+  }
 }
+
+
                       
 
        const  totalItems = await Product.countDocuments(filterQuery)
 
        const totalPages = Math.ceil(totalItems/limit);
 
+if (totalItems === 0) {
+  return res.status(200).json({
+    success: false,
+    message: "No products exist with these filters",
+    data: {
+      totalItems: 0,
+      totalPages: 0,
+      productoncurrentPage: [],
+      startIndex: 0,
+      endIndex: 0,
+      hasNex: false,
+      hasprev: false,
+      isLastPage: true,
+      isFirspage: true,
+      lastpageItems: 0
+    }
+  });
+}
+
+
+if (page > totalPages) {
+  return res.status(400).json({
+      message:"Page not found"
+  });
+}
 
        if(page>totalPages){
         return res.status(400).json({
@@ -64,7 +90,24 @@ if(priceRange){
        const productoncurrentPage = await Product.find(filterQuery).skip(skip).limit(limit);
 
 
-
+               if (productoncurrentPage.length === 0) {
+  return res.status(200).json({
+    success: false,
+    message: "No products exist with these filters",
+    data: {
+      totalItems: 0,
+      totalPages: 0,
+      productoncurrentPage: [],
+      startIndex: 0,
+      endIndex: 0,
+      hasNex: false,
+      hasprev: false,
+      isLastPage: true,
+      isFirspage: true,
+      lastpageItems: 0
+    }
+  });
+}
         const startIndex = skip+1;
         const endIndex = Math.min(skip+limit, totalItems )
 
@@ -282,6 +325,56 @@ const productDetailPage = async (req, res) => {
   }
 };
 
+const categorysuggestion = async (req, res) => {
+   console.log(" suggestCategory called with:", req.params.productId);
+
+  try{
+  const { productId } = req.params;
+
+  if (!productId) {
+    return res.status(400).json({
+      success: false,
+      message: "ProductId is required"
+    });
+  }
+
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product with this productId doesn't exist"
+    });
+  }
+
+  const similarCategory = product.brand;
+
+  // Find products with same category excluding the current product
+  const productsWithSimilarCategory = await Product.find({
+    brand: similarCategory,
+    _id: { $ne: productId }  // exclude current product
+  });
+
+  if (productsWithSimilarCategory.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "No products found with similar category"
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Successfully fetched products with similar category",
+    products: productsWithSimilarCategory,
+  });
+}catch(error){
+ console.log(error.message)
+ res.status(500).json({ success: false, message: "Internal Server Error" });
+}
+}
+
+
+
     // const mostsoldProducts = async(req,res)=>{
                
     //          const products = await Order.aggregate([
@@ -342,7 +435,11 @@ const productDetailPage = async (req, res) => {
 
   module.exports= {
     fetchAllProducts,
-    updateproduct,
-    deleteProduct
+  
+    
+categorysuggestion,
+  updateproduct,
+    productDetailPage
+
 
   }

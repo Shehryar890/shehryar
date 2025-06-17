@@ -6,7 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import axios from "axios";
-import Loader from "../loading";
+// import Loader from "../loading";
 import { useDispatch } from "react-redux";
 import { usernameActions } from "../../../store/username";
 

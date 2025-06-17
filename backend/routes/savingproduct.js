@@ -17,9 +17,9 @@ const {updateproduct} = require("../controller/allproducts")
 
 
 
-router.post('/product',  upload.array("images", 5),   createProduct )
+router.post('/product', upload.array("images"),   createProduct )
 
-router.patch("/theproduct/:id" ,  metadata,csrfProtection,  upload.array("images" , 5) , validateUpdateProduct, runvalidationMiddelware , updateproduct)
+router.patch("/theproduct/:id" ,    upload.array("images" , 5)  , updateproduct)
 
           module.exports = router;
 

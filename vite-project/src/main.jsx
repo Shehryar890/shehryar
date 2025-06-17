@@ -6,12 +6,17 @@ import { RouterProvider } from 'react-router-dom'
  import Layout from './components/layout'
 import { createStore } from'redux'
 import {Provider} from 'react-redux'
+import ProductDetailPage from './components/shop/productdetailpage'
 import Signup from './components/login/signup'
+
+import "swiper/css";
+import "swiper/css/navigation";  // for navigation arrows
+import "swiper/css/pagination";  // for pagination dots
+
  
 import LoginPage from './components/login/loginpage'
 import App from './components/app/Appmain'
 import Shop from './components/shop/mainshop'
-import MenProducts from './components/shop/menproduct'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Mainpage from './components/adminpages/adminmainpage'
@@ -28,8 +33,9 @@ import ProductCreatePage from './components/adminpages/productmanagment.jsx/prod
           children:[
 {path:'/'  , element: <App></App>},
 {path:'/shop', element:<Shop></Shop>},
-{path:'/shop/:categoryName' , element: <MenProducts></MenProducts>
 
+{
+  path:'/productdetail/:productId' , element:<ProductDetailPage/>
 },
 {
   path:"/login" , element:<LoginPage></LoginPage>

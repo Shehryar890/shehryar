@@ -4,6 +4,7 @@ const cors = require('cors');
 const express = require('express');
 
 const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 
 
 
@@ -35,6 +36,7 @@ const CouponRoute = require("./routes/coupon")
 const stripeRoutes = require("./routes/stripecheckout")
 
 const updateRoute = require('./routes/savingproduct')
+const allproducts = require("./routes/allproducts")
 
 const logoutroute = require("./routes/logout")
 const items = require('./routes/salefeatures');
@@ -42,6 +44,21 @@ const blogginRoutes = require('./routes/bloggin');
 const adminRoutes = require('./routes/adminroutes');
  const productSaveRoute = require('./routes/savingproduct');
 require("./config/passport");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,7 +86,7 @@ const connectDB = async () => {
 };
 
 
-// Call the connectDB function
+
 connectDB();
 const corsOptions = {
   origin: "http://localhost:5173", // Only allow requests from your frontend
@@ -81,8 +98,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
+const helmet = require('helmet');
+app.use(helmet());
 
-// Add compression middleware
+
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -121,19 +140,13 @@ app.use('/cart', cartrouter);
 app.use('/logout', logoutroute)
 
 app.use("/update" , updateRoute)
-
+app.use("/get" , allproducts)
 app.use('/salefeatures', items);
 app.use('/send' , csrfRoute)
 app.use('/orders', orderRoute);
 app.use('/coupon', CouponRoute)
  
-app.use("/create", (req, res, next) => {
-  console.log("✅ Route /create is being accessed");
-  console.log("📩 Request Headers:", req.headers);
-  console.log("📂 Request Body:", req.body);
-  console.log("📷 Request Files:", req.files);
-  next();
-}, productSaveRoute);
+app.use("/create",  productSaveRoute);
 
 
  app.use("/stripe"  , stripeRoutes)

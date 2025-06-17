@@ -66,6 +66,8 @@ const removeWishlistItem = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     addWhislist,
     getwhishItems,
