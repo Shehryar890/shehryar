@@ -1,6 +1,21 @@
 const mongoose = require('mongoose');
 
 
+const appliedCouponSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon",
+  },
+  name: String,
+  discountedValue: Number,
+  type: String, // 'percentage' or 'fixed'
+  discountApplied: Number, // actual amount discounted
+//   code: {
+//     type: String,
+//     default: null,
+//   },
+});
+
 
  const cartItemSchema = new mongoose.Schema({
 
@@ -54,6 +69,8 @@ price:{
 
              
         },
+
+         appliedCoupons: [appliedCouponSchema],
 
    
 

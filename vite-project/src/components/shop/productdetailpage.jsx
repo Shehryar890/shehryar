@@ -5,6 +5,7 @@ import Loader from "../loadingspinner";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination,} from 'swiper';
+import AddcartButton from "../cart/addtocartbutton";
 
 
 import "swiper/css";
@@ -368,13 +369,10 @@ const suggestion = async()=>{
               </p>
             )}
           </div>
+           < AddcartButton productId={productId} />
 
           {/* Add to Cart Count */}
-          {addtoCartCount !== undefined && (
-            <p>
-              <span className="font-semibold">In Cart:</span> {addtoCartCount}
-            </p>
-          )}
+        
 
           {/* Discount */}
         

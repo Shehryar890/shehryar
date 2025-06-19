@@ -91,7 +91,7 @@ connectDB();
 const corsOptions = {
   origin: "http://localhost:5173", // Only allow requests from your frontend
   credentials: true, // Allow cookies and authentication headers
-  methods: "GET,POST,PUT,DELETE",
+  methods: "GET,POST,PUT,DELETE,PATCH",
   allowedHeaders: "Content-Type,Authorization",
 };
 

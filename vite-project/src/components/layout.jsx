@@ -22,6 +22,7 @@ import { Toaster } from "sonner";
 
 import { gsap } from "gsap";
 import { fetchUserAction } from "../../store/user";
+import { getCart } from "../../store/cart";
 
 
 
@@ -29,8 +30,10 @@ const Layout =()=>{
   
 
 
-     
+     const users  = useSelector((state)=>state.user.users)
 
+     const user_id = users?.id;
+console.log(user_id)
     const dropdown = useSelector(state=>state.dropdown)
     const dispatch = useDispatch();
 
@@ -41,6 +44,13 @@ const Layout =()=>{
          []
          
       )
+      useEffect(()=>{
+        if(user_id){
+          dispatch(getCart())
+        }
+        
+      }, [user_id, dispatch]);
+
     
     const ismenu = useSelector(state=>state.hamburger.menu)
     const pages = useSelector(state=>state.dropdown.Pages)

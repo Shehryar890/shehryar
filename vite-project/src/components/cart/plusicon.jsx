@@ -4,19 +4,19 @@
  import axios from "axios" 
 
  import { useState  } from "react"
- 
- import { dropdownActions } from "../../../store/dropdown.js";
 
  
  import { cartSliceActions, getCart } from "../../../store/cart";
- 
  import { useDispatch, useSelector } from 'react-redux';
+//  import { PlusIcon, MinusIcon, TrashIcon } from "@heroicons/react/24/outline";
+ 
 
  import { showSuccessToast , showErrorToast , loginerror } from "../../lib/toasters.jsx";
 
 
 import Loader from "../loadingspinner";
-  const AddcartButton = ({productId , disabled}) =>{
+import { PlusIcon } from "@heroicons/react/24/outline";
+  const Increment = ({productId , disabled}) =>{
  
 const dispatch  = useDispatch()
 const users  = useSelector((state)=>state.user.users)
@@ -57,7 +57,6 @@ const handlecart  = async() =>{
       
 
      setloading(false)
-       dispatch(dropdownActions.toggledropdown('cart'));
        showSuccessToast("Successfully added to cart" , "")
        dispatch(getCart())
 
@@ -99,18 +98,9 @@ finally{
       // Loader replaces the button while loading
       <Loader small className="mx-auto my-3" />
     ) : (
-      <button
-        onClick={handlecart}
-        disabled={disabled}
-        className={`mt-4 w-full py-2 rounded-md font-semibold text-white transition
-          ${
-            disabled
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#d65a31] hover:bg-black "
-          }`}
-      >
-        {disabled ? "Out of Stock" : "Add to Cart"}
-      </button>
+     <button onClick={handlecart} className="p-2 bg-gray-100 rounded hover:bg-gray-200">
+            <PlusIcon className="w-4 h-4 text-gray-600" />
+          </button>
     )}
   </>
 );
@@ -134,4 +124,4 @@ finally{
   }
 
 
-  export default  AddcartButton
+  export default  Increment

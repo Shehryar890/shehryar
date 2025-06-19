@@ -65,7 +65,7 @@ const NavIcons = () => {
         className="cursor-pointer hover:text-orange-600 "
         onMouseEnter={() => handleMouseEnter("Pages")}
         onClick={() => handleMouseClose("Pages")}
-      >Pages
+      ><Link  to = "/cart">Cart</Link>
       </div>
 
       <div

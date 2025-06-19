@@ -5,8 +5,38 @@ import { IoIosClose } from "react-icons/io";
 import { useEffect } from "react";
 
 
-export const showSuccessToast = (msg = "Success", desc = "") => {
-  toast.success(`${msg}${desc ? `: ${desc}` : ""}`);
+export const showSuccessToast = (msg = "You need to login to continue") => {
+  toast.custom(
+    (t) => (
+      <div
+        className={`relative max-w-sm w-full bg-green-400 border border-[#f5f5f5] rounded-lg shadow-lg p-4 flex flex-col gap-3 ${
+          t.visible ? "animate-enter" : "animate-leave"
+        }`}
+      >
+ 
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="absolute top-2 right-2 text-white hover:text-red-800 text-xl"
+        >
+          <IoIosClose className="text-black font-bold" size={30} />
+        </button>
+
+        <div className="flex items-start gap-3 pr-6">
+         
+          <div className="flex flex-col">
+            <h3 className="text-white font-bold text-md">{msg}</h3>
+            
+          </div>
+        </div>
+
+      
+      </div>
+    ),
+    {
+      duration: 1000,
+      position: "top-center",
+    }
+  );
 };
 
 export const showErrorToast = (msg = "Error", desc = "") => {

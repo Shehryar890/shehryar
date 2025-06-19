@@ -22,6 +22,7 @@ import Mainpage from './components/adminpages/adminmainpage'
 
           import store from '../store/configure'
 import ProductCreatePage from './components/adminpages/productmanagment.jsx/productmanagment'
+import Cart from './components/cart/showcart'
 
       const  router = createBrowserRouter([
         {path: '/' ,  element: <Layout></Layout>,
@@ -35,6 +36,9 @@ import ProductCreatePage from './components/adminpages/productmanagment.jsx/prod
 
 {
   path:'/productdetail/:productId' , element:<ProductDetailPage/>
+},
+{
+  path:'/cart' , element:<Cart/>
 },
 {
   path:"/login" , element:<LoginPage></LoginPage>
